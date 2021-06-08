@@ -23,7 +23,6 @@ int main(void)
         {
             digitalWrite(PC13, LOW);
         }
-        delay(10000);
     }
 }
 
