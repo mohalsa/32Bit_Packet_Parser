@@ -75,8 +75,9 @@ uint8_t     pinNum        ;                                // Use for direct pin
 #define INPUT_PULLUP             (15)
 #define INPUT_PULLDOWN           (16)
 
+uint8_t pinBit(uint8_t pinNum);
 
-int pinMode(uint8_t pin, uint8_t mode)
+void pinMode(uint8_t pin, uint8_t mode)
 {
 
     // For port "C"
@@ -105,114 +106,97 @@ int pinMode(uint8_t pin, uint8_t mode)
         if (pin >= 25 && pin <= 28) {pinNum = pin - 13; pPORT_Ctr_Reg = pPORT_CRH;} 
     }
 
+    switch (mode)
+    {
+    // GP Push-Pull Configurations
+    case 1: // OUTPUT GEN PURP Push-Pull 2 MHZ
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x2 << pinBit(pinNum));
+        break;
+    
+    case 2: // OUTPUT GEN PURP Push-Pull 10 MHZ
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x1 << pinBit(pinNum));
+        break;
+    
+    case 3: // OUTPUT GEN PURP Push-Pull 50 MHZ
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |=  (0x3 << pinBit(pinNum));
+        break;
 
-    switch (pinNum) // Pin = mcu masked pin pc13 = mcu pin 2
-    { 
-    case 2:                                     // 2 = PC13's MCU's Pin
-        #define PIN_REG_START (20)              // Pin13 is at CRH register starting at bit(20)
-        if (mode >=1 && mode <= 16)             // For pin modes and configs (1 to 12 options)
-        {
-            switch (mode)
-            {
-            // GP Push-Pull Configurations
-            case 1: // OUTPUT GEN PURP Push-Pull 2 MHZ
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x2 << PIN_REG_START);
-                break;
-            
-            case 2: // OUTPUT GEN PURP Push-Pull 10 MHZ
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x1 << PIN_REG_START);
-                break;
-            
-            case 3: // OUTPUT GEN PURP Push-Pull 50 MHZ
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |=  (0x3 << PIN_REG_START);
-                break;
-
-            // GP Open-Drain Configurations
-            case 4: // OUTPUT GEN PURP Open-Drain 2 MHZ (0b0110 = 0x6)
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x6 << PIN_REG_START);
-                break;
-            
-            case 5: // OUTPUT GEN PURP Open-Drain 10 MHZ (0b0101 = 0x5)
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x5 << PIN_REG_START);
-                break;
-            
-            case 6: // OUTPUT GEN PURP Open-Drain 50 MHZ (0b0111 = 0x7)
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |=  (0x7 << PIN_REG_START);
-                break;  
+    // GP Open-Drain Configurations
+    case 4: // OUTPUT GEN PURP Open-Drain 2 MHZ (0b0110 = 0x6)
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x6 << pinBit(pinNum));
+        break;
+    
+    case 5: // OUTPUT GEN PURP Open-Drain 10 MHZ (0b0101 = 0x5)
+        *pPORT_Ctr_Reg &= ~(0xf <<pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x5 << pinBit(pinNum));
+        break;
+    
+    case 6: // OUTPUT GEN PURP Open-Drain 50 MHZ (0b0111 = 0x7)
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |=  (0x7 << pinBit(pinNum));
+        break;  
 
 
-            // Alternate Function Configurations: Push-Pull (0b10 = 0x2)
-            case 7: // Alt Func Push-Pull 2 MHZ
-            *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-            *pPORT_Ctr_Reg |= (0xa << PIN_REG_START);     // 0b1010 = 0xa
-            break;
-            
-            case 8: // Alt Func Push-Pull 10 MHZ
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x9 << PIN_REG_START);     // 0b1001 = 0x9
-                break;
-            
-            case 9: // Alt Func Push-Pull 50 MHZ
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |=  (0xb << PIN_REG_START);    // 0b1011 = 0xb
-                break;
+    // Alternate Function Configurations: Push-Pull (0b10 = 0x2)
+    case 7: // Alt Func Push-Pull 2 MHZ
+    *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+    *pPORT_Ctr_Reg |= (0xa << pinBit(pinNum));     // 0b1010 = 0xa
+    break;
+    
+    case 8: // Alt Func Push-Pull 10 MHZ
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x9 << pinBit(pinNum));     // 0b1001 = 0x9
+        break;
+    
+    case 9: // Alt Func Push-Pull 50 MHZ
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |=  (0xb << pinBit(pinNum));    // 0b1011 = 0xb
+        break;
 
-            /* Alternate Function Configurations: Open-Drain (0b11 = 0x3) */
-            
-            case 10: // Alt Func Open-Drain 2 MHZ (0b1110 = 0x6)
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0xe << PIN_REG_START);     // 0b1110 = 0xe = 14
-                break;
-            
-            case 11: // Alt Func Open-Drain 10 MHZ (0b1101 = 0x5)
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x13 << PIN_REG_START);     // 0b1101 = 0x13
-                break;
-            
-            case 12: // Alt Func Open-Drain 50 MHZ (0b1111 = 0x7)
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |=  (0xf << PIN_REG_START);    // 0b1111 = oxf
-                break;  
+    /* Alternate Function Configurations: Open-Drain (0b11 = 0x3) */
+    
+    case 10: // Alt Func Open-Drain 2 MHZ (0b1110 = 0x6)
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0xe << pinBit(pinNum));     // 0b1110 = 0xe = 14
+        break;
+    
+    case 11: // Alt Func Open-Drain 10 MHZ (0b1101 = 0x5)
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x13 << pinBit(pinNum));     // 0b1101 = 0x13
+        break;
+    
+    case 12: // Alt Func Open-Drain 50 MHZ (0b1111 = 0x7)
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |=  (0xf << pinBit(pinNum));    // 0b1111 = oxf
+        break;  
 
-            // Input Modes Configurations
+    // Input Modes Configurations
 
-            case 13: // Input Analog Mode
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x0 << PIN_REG_START);     // 0b 0000
+    case 13: // Input Analog Mode
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x0 << pinBit(pinNum));     // 0b 0000
 
-            case 14: // Input Floating Mode (reset state)
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x4 << PIN_REG_START);     // 0b0100
+    case 14: // Input Floating Mode (reset state)
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x4 << pinBit(pinNum));     // 0b0100
 
-            case 15: // Input Pull-Up
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x8 << PIN_REG_START);     // 0b1000
-                *pODR &= ~(1<<pinNum);
+    case 15: // Input Pull-Up
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x8 << pinBit(pinNum));     // 0b1000
+        *pODR &= ~(1<<pinNum);
 
-            case 16: // Input Pull-Up
-                *pPORT_Ctr_Reg &= ~(0xf << PIN_REG_START);    // Reset all 4 bits of pin 13
-                *pPORT_Ctr_Reg |= (0x8 << PIN_REG_START);     // 0b1000
-                *pODR |= (1<<pinNum);
-
-            default:
-                break;
-            } // End 2nd Switch
-        } //End if (pins output modes)
-        else
-        {
-            return -1; // Error Code implementation for selecting an incorrect pin for modes and configs!
-        }    
+    case 16: // Input Pull-Up
+        *pPORT_Ctr_Reg &= ~(0xf << pinBit(pinNum));    // Reset all 4 bits of pin 13
+        *pPORT_Ctr_Reg |= (0x8 << pinBit(pinNum));     // 0b1000
+        *pODR |= (1<<pinNum);
 
     default:
         break;
-    } // End main switch (pin selector)
-    return 0;
+    } // End  Switch
 } // End pinModes function
 
 
@@ -284,10 +268,29 @@ void digitalWrite(uint8_t pin, uint8_t output)
     }
 }
 
-float analogRead()
+void analogRead()
 {
     //todo
 }
 
-
+uint8_t pinBit (uint8_t pinNum)
+{
+    if(pinNum == 0)  return 0 ;
+    if(pinNum == 1)  return 4 ;
+    if(pinNum == 2)  return 8 ;
+    if(pinNum == 3)  return 12;
+    if(pinNum == 4)  return 16;
+    if(pinNum == 5)  return 20;
+    if(pinNum == 6)  return 24;
+    if(pinNum == 7)  return 28;
+    if(pinNum == 8)  return 0;
+    if(pinNum == 9)  return 4;
+    if(pinNum == 10) return 8;
+    if(pinNum == 11) return 12;
+    if(pinNum == 12) return 16;
+    if(pinNum == 13) return 20;
+    if(pinNum == 14) return 24;
+    if(pinNum == 15) return 28;
+    return 0;
+}
 #endif
