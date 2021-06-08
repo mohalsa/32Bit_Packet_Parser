@@ -10,21 +10,20 @@ void delay(uint32_t delay);
 
 int main(void)
 {
-
-    //pinMode(PIN13, GP_OUT_PP_2_MHZ);
-
-    // Set PC13 MODE as Output @ 50Mhz (max). 
-    GPIOC->CRH |= GPIO_CRH_MODE13_Msk;  
-    // Setting Configuration for Pin PC13 CNF[1:0]
-    GPIOC->CRH &= ~(GPIO_CRH_CNF13_Msk);
+    pinMode (PB9, INPUT_PULLUP);
+    pinMode (PC13, GP_OUT_PP_50_MHZ);
 
     while(1)
     {
-        GPIOC->ODR ^= GPIO_ODR_ODR13_Msk;
-        delay(50000);
-        
-        GPIOC->ODR ^= GPIO_ODR_ODR13_Msk;
-        delay(50000);
+        if(digitalRead(PB9))
+        {
+            digitalWrite(PC13, HIGH);
+        }
+        else
+        {
+            digitalWrite(PC13, LOW);
+        }
+        delay(10000);
     }
 }
 
