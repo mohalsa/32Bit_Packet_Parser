@@ -4,19 +4,18 @@
 
 
 // Variables Definitions
-uint32_t* const pRCC_APB2_ENR   =   (uint32_t*)(0x40021000 + 0x18);   // RCC_APB2 Bus Memory Address
-uint32_t* const pPORTC_CRH      =   (uint32_t*)(0x40011000 + 0x04);   // Port C Control Register High (Pin 8 to pin 15)
-uint32_t* const pPORTC_CRL      =   (uint32_t*)(0x40011000 + 0x00);   // Port C Control Register Low  (Pin 0 to pin 7)
-uint32_t* const pODR_C          =   (uint32_t*)(0x40011000 + 0x0C);   // Port C Output Data Register
-uint32_t* const pIDR_C          =   (uint32_t*)(0x40011000 + 0x08);
+uint32_t volatile *const pRCC_APB2_ENR   =   (uint32_t*)(0x40021000 + 0x18);   // RCC_APB2 Bus Memory Address
+uint32_t volatile *const pPORTC_CRH      =   (uint32_t*)(0x40011000 + 0x04);   // Port C Control Register High (Pin 8 to pin 15)
+uint32_t volatile *const pPORTC_CRL      =   (uint32_t*)(0x40011000 + 0x00);   // Port C Control Register Low  (Pin 0 to pin 7)
+uint32_t volatile *const pODR_C          =   (uint32_t*)(0x40011000 + 0x0C);   // Port C Output Data Register
+uint32_t const volatile *const pIDR_C    =   (uint32_t*)(0x40011000 + 0x08);
 
-uint32_t*   pPORT_Ctr_Reg ;
-uint32_t*   pPORT_CRH     ;
-uint32_t*   pPORT_CRL     ;
-uint32_t*   pODR          ;
-uint32_t*   pIDR          ;
-uint8_t     pinNum        ;           // Use for direct pin-bit mapping
-
+uint32_t volatile *pPORT_Ctr_Reg ;
+uint32_t volatile *pPORT_CRH     ;
+uint32_t volatile *pPORT_CRL     ;
+uint32_t volatile *pODR          ;
+uint32_t const volatile *pIDR    ;      // The data pointed-to by pIDR pointer is subjected to unexpected changes (volatile), but the programmer can't change the data present in the address (const)
+uint8_t pinNum;                         // Use for direct pin-bit mapping
 
 //Keywords
 #define HIGH    (1)
@@ -291,7 +290,6 @@ void digitalWrite(uint8_t pin, uint8_t output)
 {
 
     /* For port "A" pins */
-    // Port "A" Initialization
     if ((pin >= 10 && pin <= 17) || (pin >= 29 && pin <= 33) || (pin == 38))
     {
         pODR    =   (uint32_t*)(GPIO_A + 0x0C);             // Port A Output Data Register
@@ -358,10 +356,6 @@ uint8_t get_pin_bit(uint8_t pinNum)
     else if(pinNum == 15) return 28;
     else return 0;
 }
-
-
-
-
 
 
 #endif // Header Guarding End
