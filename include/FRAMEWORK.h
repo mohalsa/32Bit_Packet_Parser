@@ -3,12 +3,17 @@
 #include <stdint.h>
 
 
+
+
+
+// GPIOx Addresses
+#define GPIO_A  (0x40010800)
+#define GPIO_B  (0x40010C00)
+#define GPIO_C  (0x40011000)
+#define GPIO_D  (0x40011400)
+
 // Variables Definitions
 uint32_t volatile *const pRCC_APB2_ENR   =   (uint32_t*)(0x40021000 + 0x18);   // RCC_APB2 Bus Memory Address
-uint32_t volatile *const pPORTC_CRH      =   (uint32_t*)(0x40011000 + 0x04);   // Port C Control Register High (Pin 8 to pin 15)
-uint32_t volatile *const pPORTC_CRL      =   (uint32_t*)(0x40011000 + 0x00);   // Port C Control Register Low  (Pin 0 to pin 7)
-uint32_t volatile *const pODR_C          =   (uint32_t*)(0x40011000 + 0x0C);   // Port C Output Data Register
-uint32_t const volatile *const pIDR_C    =   (uint32_t*)(0x40011000 + 0x08);
 
 uint32_t volatile *pPORT_Ctr_Reg ;
 uint32_t volatile *pPORT_CRH     ;
@@ -21,7 +26,7 @@ uint8_t pinNum;                         // Use for direct pin-bit mapping
 #define HIGH    (1)
 #define LOW     (0)
 
-// PORTS and PINS and thier corresponding MCU Pin Number
+// PORTS & PINS and thier corresponding MCU Pin Number as in the STM32 Blue-pill pinout
 #define PC13    (2)             // Corresponding MCU Pin Number
 #define PC14    (3)             // Corresponding MCU Pin Number
 #define PC15    (4)             // Corresponding MCU Pin Number
@@ -59,18 +64,7 @@ uint8_t pinNum;                         // Use for direct pin-bit mapping
 #define PA15    (38)            // Corresponding MCU Pin Number
 
 
-
-// RCC Addresses
-#define APB2    (0x40021000)
-
-// GPIOx Addresses
-#define GPIO_A  (0x40010800)
-#define GPIO_B  (0x40010C00)
-#define GPIO_C  (0x40011000)
-#define GPIO_D  (0x40011400)
-
-
-// OUTPUT MODES and CONFIGURATIONS
+// OUTPUT MODES and CONFIGURATIONS:
 #define GP_OUT_PP_2_MHZ          (1)     //General purpose output Push-Pull
 #define GP_OUT_PP_10_MHZ         (2)     //General purpose output Push-Pull
 #define GP_OUT_PP_50_MHZ         (3)     //General purpose output Push-Pull
@@ -87,11 +81,11 @@ uint8_t pinNum;                         // Use for direct pin-bit mapping
 #define ALT_OUT_OD_10_MHZ        (11)    //Alternate Function Open Drain
 #define ALT_OUT_OD_50_MHZ        (12)    //Alternate Function Open Drain
 
-// INPUT MODES CONFIGURATIONS
+// INPUT MODES and CONFIGURATIONS:
 #define ANALOG_IN                (13)
 #define FLOATING_IN              (14)
-#define INPUT_PULLUP             (15)
-#define INPUT_PULLDOWN           (16)
+#define INPUT_PULLUP             (15)   // ODR = HIGH @ the pin
+#define INPUT_PULLDOWN           (16)   // ODR = LOW  @ the pin
 
 // Function prototypes
 uint8_t get_pin_bit(uint8_t pinNum);
