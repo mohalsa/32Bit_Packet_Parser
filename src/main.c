@@ -1,7 +1,7 @@
 // Includes
 #include "stm32f1xx.h"
 #include <stdint.h>
-#include "clocks.h"
+#include "FRAMEWORK.h"
 #include "gpios.h"
 
 // Prototypes
