@@ -1,10 +1,7 @@
 #ifndef FRAMEWORK_H_
 #define FRAMEWORK_H_
+
 #include <stdint.h>
-
-
-
-
 
 // GPIOx Memory Addresses
 #define GPIO_A  (0x40010800)
