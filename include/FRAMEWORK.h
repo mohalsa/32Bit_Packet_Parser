@@ -6,7 +6,7 @@
 
 
 
-// GPIOx Addresses
+// GPIOx Memory Addresses
 #define GPIO_A  (0x40010800)
 #define GPIO_B  (0x40010C00)
 #define GPIO_C  (0x40011000)
@@ -20,16 +20,16 @@ uint32_t volatile *pPORT_CRH     ;
 uint32_t volatile *pPORT_CRL     ;
 uint32_t volatile *pODR          ;
 uint32_t const volatile *pIDR    ;      // The data pointed-to by pIDR pointer is subjected to unexpected changes (volatile), but the programmer can't change the data present in the address (const)
-uint8_t pinNum;                         // Use for direct pin-bit mapping
+uint8_t pinNum;                         // Used for direct pin-bit mapping
 
-//Keywords
-#define HIGH    (1)
-#define LOW     (0)
+//Keyword
+#define HIGH     (1)
+#define LOW      (0)
 
 // PORTS & PINS and thier corresponding MCU Pin Number as in the STM32 Blue-pill pinout
-#define PC13    (2)             // Corresponding MCU Pin Number
-#define PC14    (3)             // Corresponding MCU Pin Number
-#define PC15    (4)             // Corresponding MCU Pin Number
+#define PC13_LED (2)            // Port"C" Pin"13" | Built-in LED
+#define PC14     (3)            // Port"C" Pin"14"
+#define PC15     (4)            // Port"C" Pin"15"
 
 #define PB0     (18)            // Corresponding MCU Pin Number
 #define PB1     (19)            // Corresponding MCU Pin Number
@@ -65,21 +65,21 @@ uint8_t pinNum;                         // Use for direct pin-bit mapping
 
 
 // OUTPUT MODES and CONFIGURATIONS:
-#define GP_OUT_PP_2_MHZ          (1)     //General purpose output Push-Pull
-#define GP_OUT_PP_10_MHZ         (2)     //General purpose output Push-Pull
-#define GP_OUT_PP_50_MHZ         (3)     //General purpose output Push-Pull
+#define GP_OUT_PP_2_MHZ          (1)     //General purpose output Push-Pull (freq = 2 MHz)
+#define GP_OUT_PP_10_MHZ         (2)     //General purpose output Push-Pull (freq = 10 MHz)
+#define GP_OUT_PP_50_MHZ         (3)     //General purpose output Push-Pull (freq = 50 MHz)
 
-#define GP_OUT_OD_2_MHZ          (4)     //General purpose output Open-Drain
-#define GP_OUT_OD_10_MHZ         (5)     //General purpose output Open-Drain
-#define GP_OUT_OD_50_MHZ         (6)     //General purpose output Open-Drain
+#define GP_OUT_OD_2_MHZ          (4)     //General purpose output Open-Drain (freq = 2 MHz)
+#define GP_OUT_OD_10_MHZ         (5)     //General purpose output Open-Drain (freq = 10 MHz)
+#define GP_OUT_OD_50_MHZ         (6)     //General purpose output Open-Drain (freq = 50 MHz)
 
-#define ALT_OUT_PP_2_MHZ         (7)     //Alternate Function Push Pull
-#define ALT_OUT_PP_10_MHZ        (8)     //Alternate Function Push Pull
-#define ALT_OUT_PP_50_MHZ        (9)     //Alternate Function Push Pull
+#define ALT_OUT_PP_2_MHZ         (7)     //Alternate Function Push Pull (freq = 2 MHz)
+#define ALT_OUT_PP_10_MHZ        (8)     //Alternate Function Push Pull (freq = 10 MHz)
+#define ALT_OUT_PP_50_MHZ        (9)     //Alternate Function Push Pull (freq = 50 MHz)
 
-#define ALT_OUT_OD_2_MHZ         (10)    //Alternate Function Open Drain
-#define ALT_OUT_OD_10_MHZ        (11)    //Alternate Function Open Drain
-#define ALT_OUT_OD_50_MHZ        (12)    //Alternate Function Open Drain
+#define ALT_OUT_OD_2_MHZ         (10)    //Alternate Function Open Drain (freq = 2 MHz)
+#define ALT_OUT_OD_10_MHZ        (11)    //Alternate Function Open Drain (freq = 10 MHz)
+#define ALT_OUT_OD_50_MHZ        (12)    //Alternate Function Open Drain (freq = 50 MHz)
 
 // INPUT MODES and CONFIGURATIONS:
 #define ANALOG_IN                (13)
@@ -109,7 +109,7 @@ void pinMode(uint8_t pin, uint8_t mode)
         pinBit          =   get_pin_bit(pinNum);
     }
     // Port "B" Initialization
-    else if (pin == 19 || (pin >= 39 && pin <= 46) || (pin >= 25 && pin <= 28) || (pin == 21) || (pin == 22))
+    else if (pin == 19 || pin == 18 || pin == 21 || pin == 22 || (pin >= 39 && pin <= 46) || (pin >= 25 && pin <= 28))
     {
         *pRCC_APB2_ENR  |=  (1<<3);                       // Enable Clock on port B
         pPORT_CRH       =   (uint32_t*)(GPIO_B + 0x04);   // Port B Control Register High (Pin 8 to pin 15)
@@ -250,7 +250,7 @@ int digitalRead(int pin)
         else if (pin == 38) {pinNum = pin - 23;}    
     }
     // Port "B" Initialization
-    else if (pin == 19 || (pin >= 39 && pin <= 46) || (pin >= 25 && pin <= 28) || (pin == 21) || (pin == 22))
+    else if (pin == 19 || pin == 18 || pin == 21 || pin == 22 || (pin >= 39 && pin <= 46) || (pin >= 25 && pin <= 28))
     {
         pIDR    =   (uint32_t*)(GPIO_B + 0x08);   // Port B input Data Register        
         if (pin == 19 || pin == 18) {pinNum = pin - 18;}
@@ -292,7 +292,7 @@ void digitalWrite(uint8_t pin, uint8_t output)
         else if (pin == 38) {pinNum = pin - 23;}    
     }
     /* For port "B" pins */
-    if (pin == 19 || (pin >= 39 && pin <= 46) || (pin >= 25 && pin <= 28) || (pin == 21) || (pin == 22))
+    else if (pin == 19 || pin == 18 || pin == 21 || pin == 22 || (pin >= 39 && pin <= 46) || (pin >= 25 && pin <= 28))
     {
         pODR    =   (uint32_t*)(GPIO_B + 0x0C);             // Port B Output Data Register
         if (pin == 19 || pin == 18) {pinNum = pin - 18;}
