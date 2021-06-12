@@ -2,11 +2,12 @@
     This is a packet field extraction programme.
     A packet example is in the packets header file, change accordingly
     To debug this project:
-    1- Run the "Allow debuggin for any STM32 ..etc.. " task
-    2- In the debugger, select the printf & scanf enabled - PIO build and debug active file option
-    3- An external consol will open, this is where you are going to interact with the program
+    1- Run the "Allow debuggind for any STM32 ..etc.. " task
+    2- Add some break points (5 Max) and Run the debugger "PIO Debug"
 
     To allow uploading a new code to the MCU you must terminate the "Allow debuggin for any STM32 ... " task first!
+    if still not uploading, terminate the "OpenOCD" task on the Activity monitor(MAC) or Task Manager(Windows)
+    because this is a known issue!
 
     By Mohammed Alsada
     Github: https://github.com/mohalsa
@@ -18,6 +19,8 @@
 #include "packets.h"
 #include <inttypes.h>   // Used for the scansets and printsets i.e SCNx32
 
+void clearBuffer(void);
+
 
 uint32_t packet_32bit = 0;
 
@@ -25,9 +28,20 @@ int main(void)
 {
     while(1)
     {
-        printf("\nEnter the recieved 32Bits packet value: ");
-        scanf("%ld", &packet_32bit);
-        printf("\nYour packet value is: %lX, Press any key to exit", packet_32bit);
-        getchar();
+        clearBuffer();
+        printf("Enter the recieved 32Bits packet value:\n");
+        scanf("%lx", &packet_32bit);
+        printf("Your packet value is: %lX\n", packet_32bit);
+        fflush(stdout);
+    }
+}
+
+void clearBuffer(void)
+{
+    uint8_t c;
+    while ( (c = getchar()) != '\n' && c != EOF)
+    {
+        // Keep looping and parsing getchar into variable c untill nothing is left in the buffer
+        // until the enter is pressed and it has to be the last thing entered or end of file!
     }
 }
