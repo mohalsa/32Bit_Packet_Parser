@@ -11,5 +11,19 @@
             ],
             "label": "Allow debugging for any STM32F103xx MCU"
         },
-    ]
+        {
+            "label": "Terminate All Tasks",
+            "command": "echo ${input:terminate}",
+            "type": "shell",
+            "problemMatcher": []
+          }
+    ],
+    "inputs": [
+        {
+          "id": "terminate",
+          "type": "command",
+          "command": "workbench.action.tasks.terminate",
+          "args": "terminateAll"
+        }
+      ]
 }
